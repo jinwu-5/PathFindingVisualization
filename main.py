@@ -5,8 +5,8 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-ORANGE = (255, 128, 0)
+GOLDEN = (255, 215, 0)
+ORANGE = (255, 140, 0)
 PURPLE = (128, 0, 255)
 GREY = (108, 108, 108)
 
@@ -34,6 +34,9 @@ class Block:
     def is_wall(self):
         return self.color == GREY
 
+    def get_pos(self):
+        return self.row, self.col
+
     def add_block(self, color):
         rect = pygame.Rect(self.row * block_size, self.col * block_size, block_size - 1, block_size - 1)
         pygame.draw.rect(WINDOW, color, rect)
@@ -41,7 +44,7 @@ class Block:
 
     def add_neighbors(self):
 
-        """append neighbor blocks (up, down, left, right) to neighbor array"""
+        """append neighbor blocks (up, down, left, right) to neighbor list"""
 
         self.neighbors = []
 
@@ -87,14 +90,33 @@ def clicked_pos(pos):
     return row, col
 
 
-def dijkstra(start, end):
+def dijkstra(start, goal):
+    """
+     Dijkstra's algorithm - steps break down
+     1. Create a list of all the unvisited nodes called the unvisited set.
+     2. Set distance of the initial node to zero and to to infinity for all other nodes.
+     3. Set the initial node as current.
+     4. Have the current node being the node with the shortest distance in the list of
+        unvisited nodes and remove this node from the list.
+     5. For the current node, consider all of its unvisited neighbours and calculate their
+        tentative distances through the current node. Compare the newly calculated tentative
+        distance to the current assigned value and assign the smaller one. Store the neighbour
+        and its current (the node that leads to neighbor) into the came_from.
+     6. If the current node is the destination node or if the smallest tentative distance
+        among the nodes in the unvisited set is infinity (occurs when there is no connection
+        between the initial node and remaining unvisited nodes), hen step. The algorithm has
+        finished.
+     7. Otherwise, go back to step 4.
+    """
+
     unvisited = [node for row in grid for node in row]
     distance = {node: INFINITY for row in grid for node in row}
-    path = {}
     distance[start] = 0
-    current = None
+    came_from = {}
+    current = start
 
-    while current != end:
+    while unvisited:
+
         minimum = INFINITY
 
         for node in unvisited:
@@ -107,33 +129,40 @@ def dijkstra(start, end):
                 unvisited.remove(current)
                 break
 
-        if current == end:
-            construct_path(path, current)
-            start.add_block(PURPLE)
+        if current == goal:
+            reconstruct_path(start, current, came_from)
             return True
 
         for neighbor in current.neighbors:
-            if neighbor.is_wall():
-                alt = INFINITY + distance[current]
-            else:
-                alt = 1 + distance[current]
+            alt = distance[current] + 1
             if alt < distance[neighbor]:
                 distance[neighbor] = alt
-                path[neighbor] = current
+                came_from[neighbor] = current
 
-        current.add_block(GREEN)
+        if current != start:
+            current.add_block(GREEN)
         pygame.display.update()
 
+    return False
 
-def construct_path(path, current):
-    while current in path:
-        current = path[current]
-        current.add_block(BLUE)
+
+def reconstruct_path(start, current, came_from):
+    """
+    The current node starts at end node, the goal is to traverse the end node back to the
+    start node. The current node will be equal to whatever last node came from until the
+    start node is reached."
+    """
+
+    while current in came_from:
+        current = came_from[current]
+        if current != start:
+            current.add_block(GOLDEN)
+        pygame.display.update()
 
 
 def main():
     draw_block()
-    start, end = None, None
+    start, goal = None, None
 
     while True:
         for event in pygame.event.get():
@@ -145,13 +174,13 @@ def main():
                 mouse_pos = pygame.mouse.get_pos()
                 row, col = clicked_pos(mouse_pos)
                 block = grid[row][col]
-                if not start and block != end:
+                if not start and block != goal:
                     start = block
                     start.add_block(PURPLE)
-                elif not end and block != start:
-                    end = block
-                    end.add_block(ORANGE)
-                elif block != start and block != end:
+                elif not goal and block != start:
+                    goal = block
+                    goal.add_block(ORANGE)
+                elif block != start and block != goal:
                     block.add_block(GREY)
 
             elif pygame.mouse.get_pressed()[2]:  # Right Mouse Click
@@ -161,22 +190,27 @@ def main():
                 block.add_block(WHITE)
                 if block == start:
                     start = None
-                elif block == end:
-                    end = None
+                elif block == goal:
+                    goal = None
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN and start and end:
+                if event.key == pygame.K_d and start and goal:
                     for row in grid:
                         for block in row:
                             block.add_neighbors()
 
-                    dijkstra(start, end)
+                    dijkstra(start, goal)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_c:
                     start = None
-                    end = None
+                    goal = None
                     draw_block()
+                elif event.key == pygame.K_w:
+                    for row in grid:
+                        for block in row:
+                            if block.color == GREEN or block.color == GOLDEN:
+                                block.add_block(WHITE)
 
         pygame.display.update()
 
