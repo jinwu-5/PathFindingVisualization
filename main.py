@@ -4,7 +4,7 @@ import sys
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
-RED = (255, 0, 0)
+FOREST_GREEN = (34, 139, 34)
 GOLDEN = (255, 215, 0)
 ORANGE = (255, 140, 0)
 PURPLE = (128, 0, 255)
@@ -100,9 +100,26 @@ def h(current, goal):
 
 
 def a_star(start, goal):
+    """
+     A* search algorithm - steps break down
+     1. Create an open_set and add the initial node to the open_set.
+     2. Set g_score of the initial node to zero and to infinity for all other nodes.
+     3. Set f_score of the initial node to heuristic cost between the initial node and end node,
+        and set f_score to infinity for all other nodes.
+     4. Have the current node being the node with the lowest f_score and remove
+        this node from the f_score and the open_set.
+     5. For the current node, calculate its tentative_g_Score distances by adding one to its
+        current g_score (since all the edges are one). Consider all of its neighbors and compare
+        the newly calculated tentative_g_score to the assigned value and assign the smaller one.
+        If a better path is found, store the neighbor and its current (the node that leads to
+        neighbor) into the came_from. Add neighbor to open_set if it wasn't already in the set.
+     6. If the current node is the destination node or if open_set is empty but goal was never
+        reached, then stop. The algorithm has finished.
+     7. Otherwise, go back to step 4.
+    """
 
-    open_set = [start]
-    closed_set = []
+    open_set = set()
+    open_set.add(start)
     g_score = {node: INFINITY for row in grid for node in row}
     g_score[start] = 0
     f_score = {node: INFINITY for row in grid for node in row}
@@ -122,7 +139,6 @@ def a_star(start, goal):
             if f_score[node] == minimum:
                 current = node
                 open_set.remove(current)
-                closed_set.append(current)
                 del f_score[current]
                 break
 
@@ -131,15 +147,17 @@ def a_star(start, goal):
             return True
 
         for neighbor in current.neighbors:
-            tentative_gScore = g_score[current] + 1
+            tentative_g_score = g_score[current] + 1
 
-            if tentative_gScore < g_score[neighbor]:
+            if tentative_g_score < g_score[neighbor]:
                 came_from[neighbor] = current
-                g_score[neighbor] = tentative_gScore
+                g_score[neighbor] = tentative_g_score
                 f_score[neighbor] = g_score[neighbor] + h(neighbor, goal)
 
                 if neighbor not in open_set:
-                    open_set.append(neighbor)
+                    open_set.add(neighbor)
+                    if neighbor != goal:
+                        neighbor.add_block(FOREST_GREEN)
 
         if current != start:
             current.add_block(GREEN)
@@ -153,18 +171,18 @@ def dijkstra(start, goal):
      Dijkstra's algorithm - steps break down
      1. Create a list of all the unvisited nodes called the unvisited set.
      2. Set distance of the initial node to zero and to to infinity for all other nodes.
-     3. Set the initial node as current.
-     4. Have the current node being the node with the shortest distance in the list of
+     3. Have the current node being the node with the shortest distance in the list of
         unvisited nodes and remove this node from the list.
-     5. For the current node, consider all of its unvisited neighbours and calculate their
+     4. For the current node, consider all of its unvisited neighbors and calculate their
         tentative distances through the current node. Compare the newly calculated tentative
-        distance to the current assigned value and assign the smaller one. Store the neighbour
-        and its current (the node that leads to neighbor) into the came_from.
-     6. If the current node is the destination node or if the smallest tentative distance
+        distance to the current assigned value and assign the smaller one. If a better path
+        is found, store the neighbor and its current (the node that leads to neighbor) into
+        the came_from.
+     5. If the current node is the destination node or if the smallest tentative distance
         among the nodes in the unvisited set is infinity (occurs when there is no connection
-        between the initial node and remaining unvisited nodes), hen step. The algorithm has
+        between the initial node and remaining unvisited nodes), then stop. The algorithm has
         finished.
-     7. Otherwise, go back to step 4.
+     6. Otherwise, go back to step 3.
     """
 
     unvisited = [node for row in grid for node in row]
@@ -274,7 +292,7 @@ def main():
                 elif event.key == pygame.K_w:
                     for row in grid:
                         for block in row:
-                            if block.color == GREEN or block.color == GOLDEN:
+                            if block.color == GREEN or block.color == GOLDEN or block.color == FOREST_GREEN:
                                 block.add_block(WHITE)
 
         pygame.display.update()

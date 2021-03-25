@@ -1,2 +1,2 @@
 # PathFindingVisualization
-A Dijkstra's algorithm Pathfinding Demonstration using Python and PyGame.
+Visualize A* Search algorithm and Dijkstra's algorithm with pygame.
