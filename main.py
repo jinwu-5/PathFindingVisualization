@@ -90,6 +90,64 @@ def clicked_pos(pos):
     return row, col
 
 
+def h(current, goal):
+    """heuristic function -> return the estimated distance from node n to the goal node"""
+
+    x_1, y_1 = current.get_pos()
+    x_2, y_2 = goal.get_pos()
+
+    return abs(x_2 - x_1) + abs(y_2 - y_1)
+
+
+def a_star(start, goal):
+
+    open_set = [start]
+    closed_set = []
+    g_score = {node: INFINITY for row in grid for node in row}
+    g_score[start] = 0
+    f_score = {node: INFINITY for row in grid for node in row}
+    f_score[start] = h(start, goal)
+    came_from = {}
+    current = start
+
+    while open_set:
+
+        minimum = INFINITY
+
+        for node in f_score:
+            if f_score[node] < minimum:
+                minimum = f_score[node]
+
+        for node in f_score:
+            if f_score[node] == minimum:
+                current = node
+                open_set.remove(current)
+                closed_set.append(current)
+                del f_score[current]
+                break
+
+        if current == goal:
+            reconstruct_path(start, current, came_from)
+            return True
+
+        for neighbor in current.neighbors:
+            tentative_gScore = g_score[current] + 1
+
+            if tentative_gScore < g_score[neighbor]:
+                came_from[neighbor] = current
+                g_score[neighbor] = tentative_gScore
+                f_score[neighbor] = g_score[neighbor] + h(neighbor, goal)
+
+                if neighbor not in open_set:
+                    open_set.append(neighbor)
+
+        if current != start:
+            current.add_block(GREEN)
+        pygame.display.update()
+
+    return False
+
+
 def dijkstra(start, goal):
     """
      Dijkstra's algorithm - steps break down
@@ -194,7 +252,14 @@ def main():
                     goal = None
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_d and start and goal:
+                if event.key == pygame.K_a and start and goal:
+                    for row in grid:
+                        for block in row:
+                            block.add_neighbors()
+
+                    a_star(start, goal)
+
+                elif event.key == pygame.K_d and start and goal:
                     for row in grid:
                         for block in row:
                             block.add_neighbors()
