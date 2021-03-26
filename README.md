@@ -4,13 +4,13 @@
 ### How to get set up? ###
 
 - Install ```Python 3```
-- Install ```Pygame``` modules:
-- Run ````Main.py```` file.
+- Install ```Pygame``` modules
+- Run ````main.py```` file
 
 ### How to use:
 
 - Left click to place blocks/walls
-- Right click to cancel blocks/walls
+- Right click to delete blocks/walls
 
 | Key  | Action |
 | ------------- | ------------- |
@@ -23,10 +23,10 @@
 ###Demo
 
 #### A* Search Algorithm
-<img src="https://im2.ezgif.com/tmp/ezgif-2-edaf6c8c3568.gif" alt="A*" width="600px" />
-<br>
+![A*](gif/a_star.gif)
+
 
 #### Dijkstra's Algorithm
-<img src="https://im2.ezgif.com/tmp/ezgif-2-eb2e3405d5f1.gif" alt="A*" width="600px" />
+![Dijkstra](gif/dijkstra.gif)
 
 
