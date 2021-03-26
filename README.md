@@ -13,7 +13,7 @@
 - Right click to delete blocks/walls
 
 | Key  | Action |
-| ------------- | ------------- |
+| :---: | :---  |
 | A  | Run A* Search Algorithm |
 | D  | Run Dijkstra's Algorithm  |
 | P  | Clear Paths |
