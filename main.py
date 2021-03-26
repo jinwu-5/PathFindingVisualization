@@ -138,7 +138,7 @@ def main():
                     goal = None
                     draw_block()
 
-                elif event.key == pygame.K_w:
+                elif event.key == pygame.K_p:
                     for row in grid:
                         for block in row:
                             if block.color == LIGHT_SKY_BLUE or block.color == GOLDEN\
