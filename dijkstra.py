@@ -1,5 +1,5 @@
 import pygame
-from constants import *
+from constants import INFINITY, LIGHT_SKY_BLUE
 from path import reconstruct_path
 
 
@@ -35,7 +35,7 @@ def dijkstra(start, goal, grid):
                 came_from[neighbor] = current
 
         if current != start:
-            current.add_block(GREEN)
+            current.add_block(LIGHT_SKY_BLUE)
         pygame.display.update()
 
     return False

@@ -21,7 +21,7 @@ class Block:
     def __init__(self, row, col):
         self.row = row
         self.col = col
-        self.color = WHITE
+        self.color = ALICE_BLUE
         self.neighbors = []
 
     def is_wall(self):
@@ -70,7 +70,7 @@ def draw_block():
     for i in range(rows):
         for j in range(cols):
             block = grid[i][j]
-            block.add_block(WHITE)
+            block.add_block(ALICE_BLUE)
     pygame.display.update()
 
 
@@ -113,7 +113,7 @@ def main():
                 mouse_pos = pygame.mouse.get_pos()
                 row, col = clicked_pos(mouse_pos)
                 block = grid[row][col]
-                block.add_block(WHITE)
+                block.add_block(ALICE_BLUE)
                 if block == start:
                     start = None
                 elif block == goal:
@@ -141,8 +141,9 @@ def main():
                 elif event.key == pygame.K_w:
                     for row in grid:
                         for block in row:
-                            if block.color == GREEN or block.color == GOLDEN or block.color == FOREST_GREEN:
-                                block.add_block(WHITE)
+                            if block.color == LIGHT_SKY_BLUE or block.color == GOLDEN\
+                                    or block.color == CORN_FLOWER_BLUE:
+                                block.add_block(ALICE_BLUE)
 
         pygame.display.update()
 

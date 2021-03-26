@@ -1,5 +1,5 @@
 import pygame
-from constants import *
+from constants import GOLDEN
 
 
 def reconstruct_path(start, current, came_from):

@@ -1,6 +1,6 @@
 import pygame
-from constants import *
 from path import reconstruct_path
+from constants import INFINITY, CORN_FLOWER_BLUE, LIGHT_SKY_BLUE
 
 
 def h(current, goal):
@@ -52,10 +52,10 @@ def a_star(start, goal, grid):
                 if neighbor not in open_set:
                     open_set.add(neighbor)
                     if neighbor != goal:
-                        neighbor.add_block(FOREST_GREEN)
+                        neighbor.add_block(CORN_FLOWER_BLUE)
 
         if current != start:
-            current.add_block(GREEN)
+            current.add_block(LIGHT_SKY_BLUE)
         pygame.display.update()
 
     return False
